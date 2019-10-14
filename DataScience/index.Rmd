@@ -1,0 +1,24 @@
+---
+title: " " #replace the title with something short and catchy to represent your project
+subtitle: "Andrew Nguyen's Data Science Portfolio" #replace blank with your name
+output:
+  html_document:
+    df_print: paged
+---
+
+## Abstract
+
+A cohesive analysis of Apple App Store game apps involving factors such as ratings, publication dates, prices, in-game purchases, and more. 
+
+### 1. Discovery and Data Preparation
+
+The first deliverable covers the initial dataset this project is based on; it then tidies it up, splits it into smaller datasets, and performs several minor analyses via graphs. It can be found [here](deliverable1.html)
+
+### 2. Model Planning and Building
+
+Coming soon...
+
+### 3. Results and Operationalization
+
+Coming soon...
+
