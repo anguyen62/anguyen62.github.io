@@ -1,0 +1,82 @@
+---
+title: "Midterm / Bookstore Data Sorting"
+author: "Andrew Nguyen"
+date: "October 11, 2019"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+editor_options:
+  chunk_output_type: console
+class: csci385
+---
+First, let's load the relevant libraries so we can effectively tidy and visualize our data.
+```{r}
+library(tidyr)
+library(dplyr)
+library(stringr)
+```
+
+We can read in out CSV files using, quite literally, read.csv. If the parameter "header=" is "TRUE", then the first row will be treated as the row names. 
+```{r}
+register <- read.csv(file="register.csv", header=TRUE, sep=",")
+sales <- read.csv(file="sales.csv", header=TRUE, sep=",")
+```
+
+For easy human reading, we can rename the first column of the Sales table "Good Category". We will deal with the rest of the columns (which are months and a year) soon.
+```{r}
+colnames(sales)[colnames(sales)=="category.of.inventory.goods"] <- "Goods Category"
+```
+
+Let's tidy this table so we have less columns and we can read by the date. We can do this by running the gather function.
+```{r}
+sales2 <- sales %>% 
+  gather(Month, Sales, X1.2018:X10.2019, na.rm = TRUE)
+
+#make a third table which replaces instances of the "X" string with a random day, as the as.Date function otherwise will not work properly without a full date.
+sales3 <- sales2 %>%
+  mutate(Month = str_replace(Month, "X", "1."))
+
+#All dates should be formatted to 1.MM.YYYY now. However, at the moment, the data class of this column is currently a string rather than R date. We can convert it into a date data type using as.Date().
+sales3$Month <- as.Date(sales3$Month, format = "%d.%m.%Y")
+
+#to ensure it's a date class, we run the class() function to determine its data class. It should return "Date".
+class(sales3$Month)
+
+#remove the second table for cleanup. After this, we now have a tidied version of the sales table.
+remove(sales2)
+```
+
+Moving on the the Register table, we can afford to turn the column names into more human-readable variables. We attempt to name these accurately and succinctly according to the provided data-guide.md.
+```{r}
+#using this particular colnames() format, we can rename all of the columns at once by also using the combine (c()) function. 
+colnames(register) <- c("Purchase ID", "Item Code/ID", "Charge Type", "Price", "Affiliation Type", "Customer ID", "Receipt","Contact Preference", "Newsletter Subscribed?", "Sales Notifications Enabled", "Preferred Customer Discount") 
+
+#for backup purposes, we should make a secondary version of this dataset.
+register2 <- register 
+
+#As this is a relatively large dataset, we can also afford to split these into smaller tables. We can do that by using Tidyverse's tibble function, allowing us to gather individual columns from existing tables. First, let's make an iteminfo dataset which detail a certain item and its unique information in price, charge type, and item ID.
+iteminfo <- tibble(
+  Item = register2$Item,
+  Charge_Type = register2$`Charge Type`,
+  Price = register2$Price
+)
+
+#We now have a relatively tidy table that lists the item ID and its repective cost and tax prices. 
+
+#We can also create a table that lists information about customers. The key will be their customer ID among other variables.
+customerinfo <- tibble(
+  Customer_ID = register2$`Customer ID`,
+  Affiliation_Type = register2$`Affiliation Type`,
+  Contact_Preference = register2$`Contact Preference`,
+  Newsletter_Subscribed = register2$`Newsletter Subscribed?`,
+  Sales_Notifications_Enabled = register2$`Sales Notifications Enabled`,
+  Preferred_Customer_Discount = register2$`Preferred Customer Discount`
+)
+
+#to remove rows without a proper customer ID (technically not NULL, but syntaxed this way), we run a grep exclusion on the customer ID column.
+customerinfo <- customerinfo[!grepl("--", customerinfo$Customer_ID),]
+
+```
+
+
