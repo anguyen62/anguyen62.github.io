@@ -132,8 +132,6 @@ ggplot(trainingset) + geom_bar(aes(x=Rating)) + coord_flip(xlim = NULL, ylim = N
 ggplot(trainingset) + geom_bar(aes(x=Type)) + coord_flip(xlim = NULL, ylim = NULL, expand = TRUE, clip = "on")
 ```
 
-# #Linear model on our dependent variable (pay) with independent variables (location)
-
 We can now do some true analysis. We will first make a model consisting of a hypothesized dependant (rating) with an independant variable (content rating).
 ```{r}
 trainingmodel <- lm(Rating ~ factor(`Content Rating`), data = trainingset)
@@ -147,4 +145,6 @@ ggplot(data = testingset, aes(x=predictions, y = Rating)) +
 ```
 
 # Model Conclusions and Limitations
-Looking at the model data, it's clear that there are some limitations to consider. For instance, the p-value is dependant on existing chosen values in the test and train tables; rerunning sample.int() would yield some differing values. As far as external/inherent values are concerned, human behavior may be a threat; for instance, people may only care to take the time to review/rate an app if they are extremely emotionally opinionated towards the app—which may also result in extremes such as 1 or 5. An resulting indicator is the model / overall data showing an inclination towards apps with average ratings of 4.0+. Thus, although model makes some sense in this regard (younger users may not have sufficient critical capacity compared to older), it lacks a degree of true accuracy.
+Looking at the model data, it's clear that there are some limitations to consider. For instance, the p-value is dependant on existing chosen values in the test and train tables; rerunning sample.int() would yield some differing values. As far as external/inherent values are concerned, human behavior may be a threat; for instance, people may only care to take the time to review/rate an app if they are extremely emotionally opinionated towards the app—which may also result in extremes such as 1 or 5. 
+
+An resulting indicator is the model / overall data showing an inclination towards apps with average ratings of 4.0+. Thus, although model makes some sense in this regard (younger users may not have sufficient critical capacity compared to older), it lacks a degree of true accuracy.
